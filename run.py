@@ -1,8 +1,6 @@
-import requests
-import time
 import os
 from truewallet import *
-from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
+from flask import Flask, render_template, flash, redirect, url_for, session, request
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
