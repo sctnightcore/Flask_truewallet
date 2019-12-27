@@ -33,7 +33,7 @@ def login():
 			else:
 				return render_template("login.html", error="Invalid email or password. Please try again!")
 		else:
-			return render_template("login.html", "Please try again!")
+			return render_template("login.html", error="Please try again!")
 	return render_template("login.html")
 
 """
@@ -76,7 +76,7 @@ def profiles():
 			else:
 				return render_template("profiles.html", error="Please try again!", data=res)
 		else:
-			return redirect(url_for('profiles'))
+			return render_template("profiles", data=res)
 	else:
 		return redirect(url_for('index'))
 
