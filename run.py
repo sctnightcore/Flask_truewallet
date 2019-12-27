@@ -1,16 +1,19 @@
 import os
-from truewallet import *
-from flask import Flask, render_template, flash, redirect, url_for, session, request
+from truewallet import Truewallet
+from flask import Flask, render_template, flash, redirect, url_for, request, session
 
+tw = Truewallet()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
-
 """
 Index
 """
 @app.route("/")
 def index():
-	return redirect(url_for('login'))
+	if session.get('access_token') is None:
+		return redirect(url_for('login'))
+	else:
+		return redirect(url_for('profiles'))
 
 """
 Truewallet Login
@@ -20,7 +23,7 @@ def login():
 	if request.method == 'POST':
 		email = request.form['email']
 		password = request.form['password']
-		res = RequestLoginOTP(email, password)
+		res = tw.RequestLoginOTP(email, password)
 		if res:
 			if res['code'] == "200":
 				session['email'] = email
@@ -28,10 +31,9 @@ def login():
 				session['mobile_number'] = res['data']['mobile_number']
 				return redirect(url_for('otp', mobile_number=res['data']['mobile_number'], otp_reference=res['data']['otp_reference']))
 			else:
-				flash('Invalid email or password. Please try again!', 'danger')
+				return render_template("login.html", error="Invalid email or password. Please try again!")
 		else:
-			return redirect(url_for('login'))
-
+			return render_template("login.html", "Please try again!")
 	return render_template("login.html")
 
 """
@@ -43,9 +45,7 @@ def otp():
 		otp_code = request.form['otp_code']
 		mobile_number = request.form['mobile_number']
 		otp_reference = request.form['otp_reference']
-		email = session['email']
-		password = session['password']
-		res = SubmitLoginOTP(email, password, otp_code, mobile_number, otp_reference)
+		res = tw.SubmitLoginOTP(otp_code, mobile_number, otp_reference)
 		if res:
 			if res['code'] == "200":
 				session['access_token'] = res['data']['access_token']
@@ -54,30 +54,27 @@ def otp():
 				flash('You were successfully logged in', 'success')
 				return redirect(url_for('profiles'))
 			else:
-				flash('Invalid OTP code. Please try again!', 'danger')
+				return render_template("otp.html", error="Invalid OTP code. Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
 		else:
 			flash('Please try again!', 'danger')
-			return redirect(url_for('otp', mobile_number=mobile_number, otp_reference=otp_reference))
+			return render_template("otp.html", error="Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
 
 	mobile_number = request.args.get("mobile_number")
 	otp_reference = request.args.get("otp_reference")
 	return render_template("otp.html", mobile_number=mobile_number, otp_reference=otp_reference)
 
 """
-Truewallet Activities to profiles ? 
+Truewallet Activities to profiles ?
 """
 @app.route("/profiles", methods=['GET', 'POST'])
 def profiles():
-	if session['access_token'] != None:
-		res = GetTransaction(session['access_token'])
+	if session.get('access_token') is not None:
+		res = tw.GetTransaction(session['access_token'])
 		if res:
 			if res['code'] == "UPC-200":
-				if res['data']['activities'] != None:
-					return render_template("profiles.html", data=res['data']['activities'])
-				else:
-					flash("Please set new startdate!", 'danger')
+				return render_template("profiles.html", data=res)
 			else:
-				flash('Please try again!', 'danger')
+				return render_template("profiles.html", error="Please try again!", data=res)
 		else:
 			return redirect(url_for('profiles'))
 	else:
