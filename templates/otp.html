@@ -10,6 +10,9 @@
                 </div>
                 <div class="card-body">
                     {% include "includes/messages.html" %}
+                    {% if error %}
+                        {% include "includes/error.html" %}
+                    {% endif %}
                     <form action="{{ url_for('otp')}}" method="POST">
                         <div class="form-group">
                             <label>Mobile Number</label>

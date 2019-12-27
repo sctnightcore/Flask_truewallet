@@ -15,9 +15,11 @@
 					<div align="right">
 						<h6>ยอดเงินคงเหลือ: 1000 บาท</h6>
 					</div>
-
-					</div>
+					{% if error %}
+						{% include "includes/error.html" %}
+					{% endif %}
 					<!-- Tables -->
+					{% if data.data is not none %}
 					<table class="table table-striped">
 						<thead>
 						  <tr>
@@ -28,7 +30,7 @@
 						  </tr>
 						</thead>
 						<tbody>
-							{% for i in data %}
+							{% for i in data.data.activities %}
 							<tr>
 								<th scope="row">
 									<img src="{{i.logo_url}}" style="width:40%;">
@@ -39,7 +41,10 @@
 							</tr>
 							{% endfor %}
 						</tbody>
-					  </table>
+					</table>
+					{% else %}
+						<h1>{{data.message}}</h1>
+					{% endif %}
 				</div>
 			</div>
 			<div class="card-footer bg-transparent">By sctnightcore</div>
