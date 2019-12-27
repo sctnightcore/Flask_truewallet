@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %} OTP Page {% endblock title %}
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center align-items-center animated animatedFadeInUp fadeInUp" style="height:100vh">
+        <div class="col-sm-9 col-md-7 col-lg-5">
+            <div class="card">
+                <div style="display: flex; justify-content: center;">
+                    <img src="https://cdn.truemoney.com/wp-content/uploads/2017/08/wallet-logo.png" style="padding: 20px; width:60%;" />
+                </div>
+                <div class="card-body">
+                    {% include "includes/messages.html" %}
+                    <form action="{{ url_for('otp')}}" method="POST">
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="text" class="form-control" name="mobile_number" value="{{ mobile_number }}">
+                        </div>
+                        <div class="form-group">
+                            <label>OTP Reference</label>
+                            <input type="text" class="form-control" name="otp_reference" value="{{ otp_reference }}">
+                        </div>
+                        <div class="form-group">
+                            <label>OTP Password</label>
+                            <input type="text" class="form-control" name="otp_code">
+                        </div>
+                        <input class="btn btn-primary btn-block" type="submit" value="Login">
+                    </form> 
+                </div>
+                <div class="card-footer bg-transparent">By sctnightcore</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

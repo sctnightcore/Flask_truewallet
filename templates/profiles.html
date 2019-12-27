@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Profiles Page{% endblock title %}
+{% block body %}
+<div class="container">
+	<div class="card" style="margin-top: 10%;margin-bottom: 20px;">
+		<div class="card-body">
+			<div style="display: flex; justify-content: center;">
+				<img src="https://cdn.truemoney.com/wp-content/uploads/2017/08/wallet-logo.png" style="padding: 10px; width:10%;" />
+			</div>
+			<!--Nav bar -->			
+			{% include "includes/dashboard_menu.html" %}
+			{% include "includes/messages.html" %}
+			<div class="card" style="margin-top: 1%;margin-bottom: 20px;">
+				<div class="card-body">
+					<div align="right">
+						<h6>ยอดเงินคงเหลือ: 1000 บาท</h6>
+					</div>
+
+					</div>
+					<!-- Tables -->
+					<table class="table table-striped">
+						<thead>
+						  <tr>
+							<th scope="col" width="10%">ประเภท</th>
+							<th scope="col" width="50%">รายละเอียด</th>
+							<th scope="col" width="20%">จำนวนเงิน</th>
+							<th scope="col" width="20%">วันที่</th>
+						  </tr>
+						</thead>
+						<tbody>
+							{% for i in data %}
+							<tr>
+								<th scope="row">
+									<img src="{{i.logo_url}}" style="width:40%;">
+								</th>
+								<td>"{{i.title}}"<br>"{{ i.sub_title }}"</td>
+								<td>"{{i.amount}}"</td>
+								<td>"{{i.date_time}}"</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					  </table>
+				</div>
+			</div>
+			<div class="card-footer bg-transparent">By sctnightcore</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock body %}
