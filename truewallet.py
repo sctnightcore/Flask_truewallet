@@ -81,7 +81,6 @@ class Truewallet(object):
 		limit = 50
 		try:
 			r = requests.get("https://mobile-api-gateway.truemoney.com/mobile-api-gateway/user-profile-composite/v1/users/transactions/history", headers={'User-agent': 'okhttp/3.8.0', 'Content-Type': 'application/json', 'Authorization': token}, params={'start_date': startdate, 'end_date': enddate, 'limit': limit})
-			print(dump.dump_all(r))
 			if r.status_code == 200:
 				return r.json()
 			else:
