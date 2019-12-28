@@ -5,14 +5,14 @@ from flask import Flask, render_template, flash, redirect, url_for, request, ses
 tw = Truewallet()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
-app.config["PERMANENT_SESSION_LIFETIME"] = 1200
+app.config["PERMANENT_SESSION_LIFETIME"] = 1500
 
 """
 Index
 """
 @app.route("/")
 def index():
-	if session.get('access_token') is None:
+	if not 'access_token' in session:
 		return redirect(url_for('login'))
 	else:
 		return redirect(url_for('profiles'))
@@ -28,6 +28,7 @@ def login():
 		res = tw.RequestLoginOTP(email, password)
 		if res:
 			if res['code'] == "200":
+				session.permanent = True
 				session['email'] = email
 				session['password'] = password
 				session['mobile_number'] = res['data']['mobile_number']
@@ -56,7 +57,6 @@ def otp():
 		if res:
 			if res['code'] == "200":
 				flash('You were successfully logged in', 'success')
-				session.permanent = True
 				session['access_token'] = res['data']['access_token']
 				session['reference_token'] = res['data']['reference_token']
 				session['Full_name'] = "{} {}".format(res['data']['firstname_en'], res['data']['lastname_en'])
@@ -76,7 +76,7 @@ Truewallet Activities to profiles ?
 """
 @app.route("/profiles", methods=['GET', 'POST'])
 def profiles():
-	if session.get('access_token') is not None:
+    if 'access_token' in session:
 		res = tw.GetTransaction(session['access_token'])
 		if res:
 			if res['code'] == "UPC-200":
