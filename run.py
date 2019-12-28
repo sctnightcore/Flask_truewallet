@@ -72,6 +72,7 @@ def profiles():
 		res = tw.GetTransaction(session['access_token'])
 		if res:
 			print(res)
+			# TODO !
 			if res['code'] == "UPC-200":
 				return render_template("profiles.html", data=res)
 			else:
