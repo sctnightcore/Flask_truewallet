@@ -58,7 +58,7 @@ def otp():
 				return render_template("otp.html", error="Invalid OTP code. Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
 		else:
 			return render_template("otp.html", error="Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
-	if request.args.get('mobile_number') and otp_reference is not None:
+	if request.args.get('mobile_number') and request.args.get('otp_reference') is not None:
 		mobile_number = request.args.get("mobile_number")
 		otp_reference = request.args.get("otp_reference")
 		return render_template("otp.html", mobile_number=mobile_number, otp_reference=otp_reference)
