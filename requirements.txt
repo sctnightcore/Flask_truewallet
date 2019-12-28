@@ -1,5 +1,3 @@
-Flask
-requests
-requests-toolbelt
-
-
+requests==2.22.0
+Flask==1.1.1
+requests_toolbelt==0.9.1
