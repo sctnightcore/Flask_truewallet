@@ -5,6 +5,7 @@ from flask import Flask, render_template, flash, redirect, url_for, request, ses
 tw = Truewallet()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
+app.config["PERMANENT_SESSION_LIFETIME"] = 1200
 
 """
 Index
@@ -55,6 +56,7 @@ def otp():
 		if res:
 			if res['code'] == "200":
 				flash('You were successfully logged in', 'success')
+				session.permanent = True
 				session['access_token'] = res['data']['access_token']
 				session['reference_token'] = res['data']['reference_token']
 				session['Full_name'] = "{} {}".format(res['data']['firstname_en'], res['data']['lastname_en'])

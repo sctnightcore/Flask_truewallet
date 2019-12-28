@@ -4,9 +4,8 @@ import requests
 import hashlib
 import hmac
 import base64
-from datetime import datetime, timedelta
-import base64
 import os
+from datetime import datetime, timedelta
 from requests_toolbelt.utils import dump
 
 class Truewallet(object):
