@@ -42,6 +42,11 @@ Truewallet otp login
 """
 @app.route("/otp", methods=['GET', 'POST'])
 def otp():
+	if request.args.get("mobile_number") and request.args.get("otp_reference"):
+		mobile_number = request.args.get("mobile_number")
+		otp_reference = request.args.get("otp_reference")
+		return render_template("otp.html", mobile_number=mobile_number, otp_reference=otp_reference)
+
 	if request.method == "POST":
 		otp_code = request.form['otp_code']
 		mobile_number = request.form['mobile_number']
@@ -49,20 +54,20 @@ def otp():
 		res = tw.SubmitLoginOTP(otp_code, mobile_number, otp_reference)
 		if res:
 			if res['code'] == "200":
+				flash('You were successfully logged in', 'success')
 				session['access_token'] = res['data']['access_token']
 				session['reference_token'] = res['data']['reference_token']
 				session['Full_name'] = "{} {}".format(res['data']['firstname_en'], res['data']['lastname_en'])
-				flash('You were successfully logged in', 'success')
+				session['current_balance'] = float(res['data']['current_balance'])
 				return redirect(url_for('profiles'))
 			else:
-				return render_template("otp.html", error="Invalid OTP code. Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
+				flash("Invalid OTP code. Please try again!", "danger")
+				return render_template("otp.html", mobile_number=mobile_number, otp_reference=otp_reference)
 		else:
-			return render_template("otp.html", error="Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
-	if request.args.get('mobile_number') and request.args.get('otp_reference') is not None:
-		mobile_number = request.args.get("mobile_number")
-		otp_reference = request.args.get("otp_reference")
-		return render_template("otp.html", mobile_number=mobile_number, otp_reference=otp_reference)
+			flash("Please try again!", "danger")
+			return redirect(url_for('otp', mobile_number=mobile_number, otp_reference=otp_reference))
 	return redirect(url_for('index'))
+
 
 """
 Truewallet Activities to profiles ?
@@ -72,16 +77,13 @@ def profiles():
 	if session.get('access_token') is not None:
 		res = tw.GetTransaction(session['access_token'])
 		if res:
-			print(res)
-			# TODO !
 			if res['code'] == "UPC-200":
 				return render_template("profiles.html", data=res)
 			else:
 				return render_template("profiles.html", error="Please try again!", data=res)
 		else:
-			return render_template("profiles", error="Fail for get API!", data=None)
-	else:
-		return redirect(url_for('index'))
+			return redirect(url_for("profiles"))
+	return redirect(url_for('index'))
 
 
 """
