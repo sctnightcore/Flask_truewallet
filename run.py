@@ -5,6 +5,7 @@ from flask import Flask, render_template, flash, redirect, url_for, request, ses
 tw = Truewallet()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
+
 """
 Index
 """
@@ -56,7 +57,6 @@ def otp():
 			else:
 				return render_template("otp.html", error="Invalid OTP code. Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
 		else:
-			flash('Please try again!', 'danger')
 			return render_template("otp.html", error="Please try again!", mobile_number=mobile_number, otp_reference=otp_reference)
 
 	mobile_number = request.args.get("mobile_number")
@@ -71,12 +71,13 @@ def profiles():
 	if session.get('access_token') is not None:
 		res = tw.GetTransaction(session['access_token'])
 		if res:
+			print(res)
 			if res['code'] == "UPC-200":
 				return render_template("profiles.html", data=res)
 			else:
 				return render_template("profiles.html", error="Please try again!", data=res)
 		else:
-			return render_template("profiles", data=res)
+			return render_template("profiles", error="Fail for get API!", data=None)
 	else:
 		return redirect(url_for('index'))
 
