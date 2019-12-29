@@ -25,7 +25,8 @@ def login():
 	if request.method == 'POST':
 		email = request.form['email']
 		password = request.form['password']
-		res = tw.RequestLoginOTP(email, password)
+		tw.setCredentials(email, password)
+		res = tw.RequestLoginOTP()
 		if res:
 			if res['code'] == "200":
 				session.permanent = True
@@ -61,6 +62,8 @@ def otp():
 				session['reference_token'] = res['data']['reference_token']
 				session['Full_name'] = "{} {}".format(res['data']['firstname_en'], res['data']['lastname_en'])
 				session['current_balance'] = float(res['data']['current_balance'])
+				tw.setAccessToken(res['data']['access_token'])
+				tw.setReferenceToken(res['data']['reference_token'])
 				return redirect(url_for('profiles'))
 			else:
 				flash("Invalid OTP code. Please try again!", "danger")
@@ -77,7 +80,7 @@ Truewallet Activities to profiles ?
 @app.route("/profiles", methods=['GET', 'POST'])
 def profiles():
 	if 'access_token' in session:
-		res = tw.GetTransaction(session['access_token'])
+		res = tw.GetTransaction()
 		if res:
 			if res['code'] == "UPC-200":
 				return render_template("profiles.html", data=res)
