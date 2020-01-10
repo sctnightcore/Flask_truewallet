@@ -61,7 +61,7 @@ class Truewallet(object):
 
 	def RequestLoginOTP(self):
 		timestamp = self.getTimestamp()
-		info = "email|{}|{}".format(self.device_id, timestamp)
+		info = self.credentials['type']+"|{}|{}".format(self.device_id, timestamp)
 		signature = str(hmac.new(self.secret_key, info.encode('utf-8'), hashlib.sha1).hexdigest())
 		try:
 			r = requests.post("https://mobile-api-gateway.truemoney.com/mobile-api-gateway/api/v1/login/otp/", json={ 'type': self.credentials['type'], 'device_id': self.device_id, 'timestamp': timestamp, 'signature': signature }, headers={ 'host': 'mobile-api-gateway.truemoney.com', 'username': self.credentials['username'], 'password': self.credentials['password_enc'], 'Content-Type': 'application/json', 'User-agent': 'okhttp/3.8.0'})
